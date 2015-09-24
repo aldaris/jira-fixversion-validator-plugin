@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * The contents of this file are subject to the terms of the Common Development and
+ * Distribution License (the License). You may not use this file except in compliance with the
+ * License.
+ *
+ * You can obtain a copy of the License at legal/CDDLv1.0.txt. See the License for the
+ * specific language governing permission and limitations under the License.
+ *
+ * When distributing Covered Software, include this CDDL Header Notice in each file and include
+ * the License file at legal/CDDLv1.0.txt. If applicable, add the following below the CDDL
+ * Header, with the fields enclosed by brackets [] replaced by your own identifying
+ * information: "Portions copyright [year] [name of copyright owner]".
+ *
+ * Copyright 2015 ForgeRock AS.
+-->
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="jira-fixversion-plugin"/>
+    
+    <workflow-validator key="fixversion-validator"
+                        i18n-name-key="fixversion-validator.name"
+                        class="org.forgerock.jira.plugins.workflow.FixVersionValidatorPluginFactory">
+        <description key="fixversion-validator.description"/>
+
+        <validator-class>
+            org.forgerock.jira.plugins.workflow.validator.FixVersionValidator
+        </validator-class>
+
+        <resource type="velocity" name="view"
+                  location="templates/jira/workflow/validator/fixversion-validator-view.vm"/>
+        <resource type="velocity" name="input-parameters"
+                  location="templates/jira/workflow/validator/fixversion-validator-input.vm"/>
+        <resource type="velocity" name="edit-parameters"
+                  location="templates/jira/workflow/validator/fixversion-validator-input.vm"/>
+    </workflow-validator>
+
+    <component key="workflowUtils"
+           class="org.forgerock.jira.plugins.workflow.validator.ValidatorUtils"
+           interface="org.forgerock.jira.plugins.workflow.validator.ValidatorUtils"
+           public="true"
+           i18n-name-key="fixversion-validator.validatorutils.name">
+
+        <description key="fixversion-validator.validatorutils.description">ValidatorUtils component for Fix Version validator.</description>
+    </component>
+</atlassian-plugin>
