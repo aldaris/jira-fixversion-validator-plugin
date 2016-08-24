@@ -11,11 +11,10 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2015 ForgeRock AS.
+ * Copyright 2015-2016 ForgeRock AS.
  */
 package org.forgerock.jira.plugins.workflow.validator;
 
-import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueFieldConstants;
 import com.atlassian.jira.issue.fields.screen.FieldScreen;
@@ -24,6 +23,8 @@ import com.atlassian.jira.issue.fields.screen.FieldScreenTab;
 import com.atlassian.jira.issue.resolution.Resolution;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.jira.workflow.WorkflowActionsBean;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.InvalidInputException;
 import com.opensymphony.workflow.Validator;
@@ -32,16 +33,19 @@ import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 
+@JiraComponent
 public class FixVersionValidator implements Validator {
 
     private final ValidatorUtils validatorUtils;
-    private final I18nHelper.BeanFactory beanFactory;
+    private final I18nHelper i18n;
     private final WorkflowActionsBean workflowActionsBean = new WorkflowActionsBean();
 
-    public FixVersionValidator(ValidatorUtils validatorUtils, I18nHelper.BeanFactory beanFactory) {
+    @Inject
+    public FixVersionValidator(ValidatorUtils validatorUtils, @ComponentImport I18nHelper i18n) {
         this.validatorUtils = validatorUtils;
-        this.beanFactory = beanFactory;
+        this.i18n = i18n;
     }
 
     @Override
@@ -50,12 +54,12 @@ public class FixVersionValidator implements Validator {
         Issue issue = (Issue) transientVars.get("issue");
         List<Resolution> protectedResolutions = validatorUtils.getResolutions(args);
 
-        if (issue.getIssueTypeObject().isSubTask()) {
+        if (issue.getIssueType().isSubTask()) {
             //ignore subtasks
             return;
         }
 
-        if (protectedResolutions.contains(issue.getResolutionObject())) {
+        if (protectedResolutions.contains(issue.getResolution())) {
             if (issue.getFixVersions().isEmpty()) {
                 throw getException(transientVars, IssueFieldConstants.FIX_FOR_VERSIONS,
                         "fixversion-validator.missing.fixversion");
@@ -68,8 +72,6 @@ public class FixVersionValidator implements Validator {
 
     private InvalidInputException getException(Map transientVars, String field, String key) {
         InvalidInputException invalidInputException = new InvalidInputException();
-        I18nHelper i18n = this.beanFactory.getInstance(
-                ComponentAccessor.getJiraAuthenticationContext().getUser().getDirectoryUser());
 
         if (isFieldOnScreen(transientVars, field)) {
             invalidInputException.addError(field, i18n.getText(key));

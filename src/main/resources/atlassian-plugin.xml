@@ -42,13 +42,4 @@
         <resource type="velocity" name="edit-parameters"
                   location="templates/jira/workflow/validator/fixversion-validator-input.vm"/>
     </workflow-validator>
-
-    <component key="workflowUtils"
-           class="org.forgerock.jira.plugins.workflow.validator.ValidatorUtils"
-           interface="org.forgerock.jira.plugins.workflow.validator.ValidatorUtils"
-           public="true"
-           i18n-name-key="fixversion-validator.validatorutils.name">
-
-        <description key="fixversion-validator.validatorutils.description">ValidatorUtils component for Fix Version validator.</description>
-    </component>
 </atlassian-plugin>

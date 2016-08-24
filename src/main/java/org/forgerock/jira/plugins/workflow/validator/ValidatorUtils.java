@@ -11,18 +11,22 @@
  * Header, with the fields enclosed by brackets [] replaced by your own identifying
  * information: "Portions copyright [year] [name of copyright owner]".
  *
- * Copyright 2015 ForgeRock AS.
+ * Copyright 2015-2016 ForgeRock AS.
  */
 package org.forgerock.jira.plugins.workflow.validator;
 
 import com.atlassian.jira.config.ResolutionManager;
 import com.atlassian.jira.issue.resolution.Resolution;
+import com.atlassian.plugin.spring.scanner.annotation.component.JiraComponent;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 
+@JiraComponent
 public class ValidatorUtils {
 
     public static final String AVAILABLE_RESOLUTIONS = "availableResolutions";
@@ -30,7 +34,8 @@ public class ValidatorUtils {
     public static final String SELECTED_RESOLUTIONS = "selectedResolutions";
     private final ResolutionManager resolutionManager;
 
-    public ValidatorUtils(ResolutionManager resolutionManager) {
+    @Inject
+    public ValidatorUtils(@ComponentImport ResolutionManager resolutionManager) {
         this.resolutionManager = resolutionManager;
     }
 
@@ -65,6 +70,5 @@ public class ValidatorUtils {
         public int compare(Resolution o1, Resolution o2) {
             return o1.getId().compareTo(o2.getId());
         }
-
     }
 }
